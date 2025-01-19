@@ -2,25 +2,25 @@
   font-size: 12px;
 
   /* colors */
-  --text-color: #F0F0F0;
-  --text-color-muted: #9E9E9E;
+  --text-color: #f0f0f0;
+  --text-color-muted: #9e9e9e;
   --background-color-dark: #272727;
   --background-color-medium: #353535;
-  --background-color-light: #3D3F40;
-  --background-color-highlighted: #4F5252;
-  --background-color-bright: #5A5E5E;
+  --background-color-light: #3d3f40;
+  --background-color-highlighted: #4f5252;
+  --background-color-bright: #5a5e5e;
 
-  --accent-color-blue: #66CCCC;
-  --accent-color-orange: #EB9662;
-  --error-color: #E97878;
+  --accent-color-blue: #66cccc;
+  --accent-color-orange: #eb9662;
+  --error-color: #e97878;
   --warning-color: #e45959;
 
   --border-color-dark: #323232;
   --border-color-light: #555555;
 
   /* fonts */
-  --sans-serif-font-family: 'Inter', sans-serif;
-  --monospace-font-family: 'Roboto Mono', monospace;
+  --sans-serif-font-family: "Inter", sans-serif;
+  --monospace-font-family: "Roboto Mono", monospace;
 
   /* misc */
   --preferred-border-radius: 3px;

@@ -154,8 +154,8 @@ function parseCompilerErrors(error: string): Array<CompilationError> {
 
     parsedErrors.push({
       errorType: errorType === "ERROR" ? ErrorType.Error : ErrorType.Warning,
-      columnNumber: parseInt(column),
-      lineNumber: parseInt(line),
+      columnNumber: Number.parseInt(column),
+      lineNumber: Number.parseInt(line),
       message,
     });
   }

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
     "ignore": ["dist", "public", "**/*.css.d.ts", ".zed"]
   },
@@ -14,13 +14,16 @@
         "noStaticOnlyClass": "off"
       },
       "a11y": {
-        "useKeyWithClickEvents": "off"
+        "useKeyWithClickEvents": "off",
+        "noLabelWithoutControl": "off"
       },
       "style": {
         "noInferrableTypes": "off",
         "noNonNullAssertion": "off",
         "useEnumInitializers": "off",
-        "useTemplate": "off"
+        "useTemplate": "off",
+        "useImportType": "error",
+        "useExportType": "error"
       },
       "suspicious": {
         "noRedeclare": "off",
@@ -29,10 +32,6 @@
       },
       "correctness": {
         "useExhaustiveDependencies": "off"
-      },
-      "nursery": {
-        "useImportType": "error",
-        "useExportType": "error"
       }
     }
   },

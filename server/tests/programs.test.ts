@@ -35,7 +35,7 @@ describe("API /programs routes", () => {
     expect(response.status).toEqual(404);
   });
 
-  it.only("GET /programs should return all the user's programs", async () => {
+  it("GET /programs should return all the user's programs", async () => {
     const agent = new TestAgent();
 
     // Log in

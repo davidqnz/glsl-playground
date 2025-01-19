@@ -15,7 +15,7 @@ function load(key: string): RawEnvironmentEntry {
 function parseInteger({ key, value }: RawEnvironmentEntry): EnvironmentEntry<number | undefined> {
   if (!value) return { key, value: undefined };
 
-  const parsed = parseInt(value);
+  const parsed = Number.parseInt(value);
   if (Number.isNaN(parsed)) return { key, value: undefined };
 
   return { key, value: parsed };
