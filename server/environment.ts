@@ -60,6 +60,5 @@ export default {
   SESSION_COOKIE: fallback(load("SESSION_COOKIE"), "session").value,
   JWT_SECRET: required(load("JWT_SECRET")).value,
   SALT_ROUNDS: fallback(parseInteger(load("SALT_ROUNDS")), 10).value,
-  DATABASE_URL: required(load("DATABASE_URL")).value,
-  PGSSLMODE: fallback(parseBoolean(load("PGSSLMODE")), false).value,
+  DATABASE_FILE: required(load("DATABASE_FILE")).value,
 };

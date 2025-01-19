@@ -4,9 +4,8 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 
 import { z } from "zod";
-import type { ProgramInsert, ProgramUpdate } from "../database/types.js";
 import { authenticate } from "../middleware/authenticate.js";
-import { ProgramsService } from "../services/programs-service.js";
+import { type ProgramInsert, type ProgramUpdate, ProgramsService } from "../services/programs-service.js";
 
 export const programs = new Hono();
 

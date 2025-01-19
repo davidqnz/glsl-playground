@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-import { TestAgent, setupDbForTest, testPrograms, testUserCredentials } from "./utils";
+import { TestAgent, setupDbForTest, testPrograms, testUserCredentials } from "./utils.js";
 
 describe("API /programs routes", () => {
   beforeEach(async () => {

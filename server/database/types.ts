@@ -1,10 +1,7 @@
-import type { Insertable, Selectable, Updateable } from "kysely";
-import type { Programs, Users } from "./generated";
+import type { s } from "./db.js";
 
-export type User = Selectable<Users>;
-export type UserInsert = Insertable<Users>;
-export type UserUpdate = Updateable<Users>;
+export type DatabaseUser = typeof s.users.$inferSelect;
+export type DatabaseUserInsert = typeof s.users.$inferInsert;
 
-export type Program = Selectable<Programs>;
-export type ProgramInsert = Insertable<Programs>;
-export type ProgramUpdate = Updateable<Programs>;
+export type DatabaseProgram = typeof s.programs.$inferSelect;
+export type DatabaseProgramInsert = typeof s.programs.$inferInsert;

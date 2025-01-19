@@ -1,21 +1,10 @@
 import { serve } from "@hono/node-server";
-import "./environment.js";
 import { app } from "./app.js";
-import { db, migrator } from "./database/db.js";
+import { db, migrate } from "./database/db.js";
 import environment from "./environment.js";
 
 async function start() {
-  const migrationResultSet = await migrator.migrateToLatest();
-
-  for (const result of migrationResultSet.results || []) {
-    console.log(`${result.status}: ${result.direction} ${result.migrationName}`);
-  }
-
-  if (migrationResultSet.error) {
-    const error = migrationResultSet.error as any;
-    console.log(`${error.stack || error}`);
-    process.exit(1);
-  }
+  await migrate();
 
   const server = serve(
     {
@@ -28,9 +17,9 @@ async function start() {
   );
 
   async function shutdown() {
-    console.log("Shutting down server...");
+    console.log("Server shutting down");
     await new Promise((r) => server.close(r));
-    await db.destroy();
+    db.$client.close();
     process.exit(0);
   }
 

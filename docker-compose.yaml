@@ -1,18 +1,16 @@
 services:
   app:
     build: .
-    env_file: ./server/.env
+    restart: always
+    env_file: ./deploy/.env
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/glsl_playground
+      DATABASE_FILE: /app/deploy/database.db
       PORT: 3000
     ports:
-      - 3000:3000
-
-  db:
-    image: postgres:16.1-alpine
-    environment:
-      POSTGRES_PASSWORD: postgres
-    expose:
-      - 5432
-    ports:
-      - 5432:5432
+      - 127.0.0.1:3000:3000
+    volumes:
+      - type: bind
+        source: ./deploy
+        target: /app/deploy
+        bind:
+          create_host_path: true

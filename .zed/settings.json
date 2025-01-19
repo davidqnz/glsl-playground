@@ -3,5 +3,8 @@
     "language_server": {
       "name": "biome"
     }
+  },
+  "code_actions_on_format": {
+    "biome.organizeImports": true
   }
 }

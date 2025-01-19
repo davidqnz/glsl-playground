@@ -1,16 +1,18 @@
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
+import { eq } from "drizzle-orm";
 import * as EmailValidator from "email-validator";
 import { HTTPException } from "hono/http-exception";
 import jwt from "jsonwebtoken";
-import { db } from "../database/db.js";
-import type { User } from "../database/types.js";
+import { db, s } from "../database/db.js";
 import environment from "../environment.js";
+
+export type User = typeof s.users.$inferSelect;
+export type UserUpdate = Partial<typeof s.users.$inferSelect>;
+export type UserInsert = typeof s.users.$inferInsert;
 
 export class UsersService {
   static async create(email: string, password: string): Promise<User> {
-    const passwordHash = await bcrypt.hash(password, environment.SALT_ROUNDS);
-
     if (!EmailValidator.validate(email)) {
       throw new HTTPException(400, { message: "Not a valid email" });
     }
@@ -19,20 +21,19 @@ export class UsersService {
       throw new HTTPException(400, { message: "Password too short" });
     }
 
-    try {
-      const id = crypto.randomUUID();
-      const [newUser] = await db.insertInto("users").values({ id, email, passwordHash }).returningAll().execute();
-      return newUser;
-    } catch (error) {
-      if (error instanceof Error && error.message.match(/violates unique constraint "users_email_key"/)) {
-        throw new HTTPException(409, { message: "Username already in use" });
-      }
-      throw error;
+    const [existingUser] = await db.select().from(s.users).where(eq(s.users.email, email));
+    if (existingUser) {
+      throw new HTTPException(409, { message: "Username already in use" });
     }
+
+    const id = crypto.randomUUID();
+    const passwordHash = await bcrypt.hash(password, environment.SALT_ROUNDS);
+    const [newUser] = await db.insert(s.users).values({ id, email, passwordHash }).returning();
+    return newUser;
   }
 
   static async signIn(email: string, password: string): Promise<[User, string]> {
-    const [user] = await db.selectFrom("users").selectAll().where("email", "=", email).limit(1).execute();
+    const [user] = await db.select().from(s.users).where(eq(s.users.email, email)).limit(1);
 
     if (!user) throw new HTTPException(401, { message: "Invalid email/password" });
 

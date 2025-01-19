@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1737276205178,
+      "tag": "1737276205_ancient_weapon_omega",
+      "breakpoints": true
+    }
+  ]
+}

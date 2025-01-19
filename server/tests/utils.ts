@@ -1,7 +1,7 @@
+import { beforeAll } from "bun:test";
 import bcrypt from "bcrypt";
-
 import { app } from "../app.js";
-import { db } from "../database/db.js";
+import { db, migrate, s } from "../database/db.js";
 
 export const testUsers = {
   existing: {
@@ -145,12 +145,11 @@ export class TestAgent {
   }
 }
 
+beforeAll(async () => await migrate());
+
 export async function setupDbForTest() {
-  await db.deleteFrom("users").execute();
-  await db.deleteFrom("programs").execute();
-  await db
-    .insertInto("users")
-    .values(Object.values(testUsers).filter((u) => u.email !== "new.user@test.com"))
-    .execute();
-  await db.insertInto("programs").values(testPrograms.existing).execute();
+  await db.delete(s.users);
+  await db.delete(s.programs);
+  await db.insert(s.users).values(Object.values(testUsers).filter((u) => u.email !== "new.user@test.com"));
+  await db.insert(s.programs).values(testPrograms.existing);
 }

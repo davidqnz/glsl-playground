@@ -2,7 +2,7 @@ import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import jwt from "jsonwebtoken";
-import type { UserToken } from "../../common/api-types";
+import type { UserToken } from "../../common/api-types.js";
 import environment from "../environment.js";
 
 export const authenticate = createMiddleware<{ Variables: { user: UserToken } }>(async (c, next) => {

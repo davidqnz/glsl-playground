@@ -7,14 +7,11 @@ dist
 # Ignore output of tsc (TypeScript's compiler)
 /public
 
-# Ignore Postgres lock files.
-.s.PGSQL.*
-
-# Ignore Postgres databases.
-.tmp
-
-# Ignore Postgres logs.
-logfile
-
 # Ignore environment variables files.
 .env
+
+# Ignore sqlite databases
+*.db
+
+# Ignore deploy directory
+deploy

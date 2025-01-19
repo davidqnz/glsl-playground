@@ -1,23 +1,26 @@
 import fs from "node:fs";
+import { join } from "node:path";
 import * as esbuild from "esbuild";
 
-fs.rmSync("../dist", { recursive: true, force: true });
+function path(relativePath: string): string {
+  return join(import.meta.dirname, relativePath);
+}
 
+// Clear the output directory
+fs.rmSync(path("../dist"), { recursive: true, force: true });
+
+// Copy migrations to output
+fs.cpSync(path("database/migrations"), path("../dist/migrations"), { recursive: true });
+
+// Bundle our code
 esbuild.buildSync({
-  entryPoints: ["index.ts"],
+  entryPoints: [path("index.ts")],
   bundle: true,
   format: "esm",
   sourcemap: true,
   platform: "node",
   target: "node20",
   packages: "external",
-  outfile: "../dist/server.js",
-});
-
-esbuild.buildSync({
-  entryPoints: ["database/migrations/*.ts"],
-  outdir: "../dist/migrations",
-  format: "esm",
-  platform: "node",
-  target: "node20",
+  outfile: path("../dist/server.js"),
+  logLevel: "info",
 });

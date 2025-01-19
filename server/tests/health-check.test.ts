@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { app } from "../app";
+import { app } from "../app.js";
 
 describe("API /programs routes", () => {
   it("GET /health-check should return a healthy message", async () => {

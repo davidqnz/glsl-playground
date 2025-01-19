@@ -1,27 +1,13 @@
-import fs from "node:fs/promises";
 import path from "node:path";
-import url from "node:url";
-import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from "kysely";
-import pg from "pg";
+import { drizzle } from "drizzle-orm/libsql";
+import { migrate as drizzleMigrate } from "drizzle-orm/libsql/migrator";
 import environment from "../environment.js";
-import type { DB } from "./generated.js";
 
-const dialect = new PostgresDialect({
-  pool: new pg.Pool({
-    connectionString: environment.DATABASE_URL,
-    ssl: environment.PGSSLMODE && { rejectUnauthorized: false },
-    max: 10,
-  }),
-});
+export const db = drizzle(`file:${environment.DATABASE_FILE}`, { casing: "snake_case" });
 
-export const db = new Kysely<DB>({ dialect });
+export * as s from "./schema.js";
 
-const dirname = path.dirname(url.fileURLToPath(import.meta.url));
-export const migrator = new Migrator({
-  db,
-  provider: new FileMigrationProvider({
-    fs,
-    path,
-    migrationFolder: path.join(dirname, "migrations"),
-  }),
-});
+export async function migrate() {
+  const migrationsFolder = path.join(import.meta.dirname, "migrations");
+  await drizzleMigrate(db, { migrationsFolder });
+}
