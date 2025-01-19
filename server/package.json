@@ -14,12 +14,14 @@
     "build": "tsx build.ts"
   },
   "dependencies": {
+    "@hono/node-server": "^1.13.7",
     "bcrypt": "5.1.1",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.2",
     "email-validator": "^2.0.4",
     "express": "^4.18.2",
     "express-static-gzip": "^2.1.7",
+    "hono": "^4.6.17",
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.27.2",
     "pg": "^8.8.0"

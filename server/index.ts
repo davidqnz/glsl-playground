@@ -1,6 +1,8 @@
-import environment from "./environment.js";
-import app from "./app.js";
+import { serve } from "@hono/node-server";
+import "./environment.js";
 import { db, migrator } from "./database/db.js";
+import { app } from "./app.js";
+import environment from "./environment.js";
 
 async function start() {
   const migrationResultSet = await migrator.migrateToLatest();
@@ -15,12 +17,15 @@ async function start() {
     process.exit(1);
   }
 
-  const server = app.listen(environment.PORT, () => {
-    console.log("Started server on ", server.address());
-  });
-
-  process.on("SIGINT", shutdown);
-  process.on("SIGTERM", shutdown);
+  const server = serve(
+    {
+      fetch: app.fetch,
+      port: environment.PORT,
+    },
+    ({ address, port }) => {
+      console.log(`Server started on ${address}:${port}`);
+    },
+  );
 
   async function shutdown() {
     console.log("Shutting down server...");
@@ -28,6 +33,9 @@ async function start() {
     await db.destroy();
     process.exit(0);
   }
+
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
 }
 
 start();

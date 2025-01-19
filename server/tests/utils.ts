@@ -1,5 +1,9 @@
 import { db } from "../database/db.js";
 import bcrypt from "bcrypt";
+import environment from "../environment.js";
+
+export const setCookieRegex = new RegExp(`^${environment.SESSION_COOKIE}=(\\S+);`);
+export const clearCookieRegex = new RegExp(`^${environment.SESSION_COOKIE}=;`);
 
 export const testUsers = {
   existing: {
