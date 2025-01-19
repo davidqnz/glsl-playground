@@ -1,14 +1,14 @@
 import { type ReactElement, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import type { ProgramData } from "../../../common/api-types";
+import Confirmation from "../../confirmation/confirmation";
 import { useAuthContext } from "../../hooks/use-auth-context";
-import styles from "./dashboard.module.css";
+import { Loader } from "../../hooks/use-loader";
 import * as ProgramsService from "../../services/programs-service";
-import ProgramsTable from "../programs-table/programs-table";
 import Button from "../form-controls/button";
 import Modal from "../modal/modal";
-import Confirmation from "../../confirmation/confirmation";
-import type { ProgramData } from "../../../common/api-types";
-import { Loader } from "../../hooks/use-loader";
+import ProgramsTable from "../programs-table/programs-table";
+import styles from "./dashboard.module.css";
 
 export default function Dashboard(): ReactElement {
   const navigate = useNavigate();

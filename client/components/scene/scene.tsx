@@ -1,12 +1,12 @@
-import { type CSSProperties, type PointerEvent, type ReactElement, useEffect, useRef, useState } from "react";
-import { useEditorStateContext } from "../../hooks/use-editor-state";
-import SceneRenderer from "./webgl/scene-renderer";
-import styles from "./scene.module.css";
 import { vec2 } from "gl-matrix";
-import useMeshFromModel from "../../hooks/use-mesh-from-model";
+import { type CSSProperties, type PointerEvent, type ReactElement, useEffect, useRef, useState } from "react";
 import teapot from "../../assets/models/teapot.obj";
 import texture from "../../assets/textures/iron.png";
+import { useEditorStateContext } from "../../hooks/use-editor-state";
 import { Loader } from "../../hooks/use-loader";
+import useMeshFromModel from "../../hooks/use-mesh-from-model";
+import styles from "./scene.module.css";
+import SceneRenderer from "./webgl/scene-renderer";
 
 type Props = {
   style: CSSProperties;

@@ -1,9 +1,9 @@
-import type { IAnnotation, IMarker } from "react-ace";
 import type { CSSProperties, ReactElement } from "react";
-import styles from "./program-editor.module.css";
+import type { IAnnotation, IMarker } from "react-ace";
 import { type EditorState, useEditorStateContext } from "../../hooks/use-editor-state";
 import { ShaderType } from "../scene/webgl/shaders";
 import GLSLEditor from "./glsl-editor";
+import styles from "./program-editor.module.css";
 
 type Props = {
   style?: CSSProperties;

@@ -1,8 +1,8 @@
-import { type FormEvent, type ReactElement, useRef, useState } from "react";
-import Input from "../form-controls/input";
 import EditIcon from "@mui/icons-material/Edit";
-import styles from "./program-title.module.css";
+import { type FormEvent, type ReactElement, useRef, useState } from "react";
 import IconButton from "../form-controls/icon-button";
+import Input from "../form-controls/input";
+import styles from "./program-title.module.css";
 
 type Props = {
   editable: boolean;

@@ -1,7 +1,7 @@
 import { type Dispatch, type ReactElement, type ReactNode, createContext, useContext } from "react";
 import type { UserToken } from "../../common/api-types";
-import { Loader, type Loading, type LoadingStateAction } from "./use-loader";
 import { getUser } from "../services/auth-service";
+import { Loader, type Loading, type LoadingStateAction } from "./use-loader";
 
 type AuthContextValue = {
   user: Loading<UserToken | null>;

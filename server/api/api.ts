@@ -4,9 +4,9 @@
  ******************************************************************************/
 import { Hono } from "hono";
 
-import { users } from "./users.js";
-import { programs } from "./programs.js";
 import { HTTPException } from "hono/http-exception";
+import { programs } from "./programs.js";
+import { users } from "./users.js";
 
 export const api = new Hono();
 
@@ -22,6 +22,8 @@ api.onError((error, c) => {
     c.status(error.status);
     return c.json({ status: error.status, message: error.message });
   }
+
+  console.error(error);
   c.status(500);
   return c.json({ status: 500, message: "Internal server error " });
 });

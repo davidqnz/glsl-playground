@@ -1,4 +1,4 @@
-import { type ReactElement, lazy, Suspense } from "react";
+import { type ReactElement, Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HeaderLayout from "./components/header-layout/header-layout";
 import { AuthContextProvider } from "./hooks/use-auth-context";

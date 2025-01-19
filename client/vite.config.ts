@@ -1,6 +1,6 @@
+import react from "@vitejs/plugin-react";
 import dotenv from "dotenv";
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
 import { compression } from "vite-plugin-compression2";
 import sassDts from "vite-plugin-sass-dts";
 

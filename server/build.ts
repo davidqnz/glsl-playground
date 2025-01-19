@@ -1,5 +1,5 @@
-import * as esbuild from "esbuild";
 import fs from "node:fs";
+import * as esbuild from "esbuild";
 
 fs.rmSync("../dist", { recursive: true, force: true });
 

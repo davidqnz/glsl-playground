@@ -1,10 +1,10 @@
-import environment from "../environment.js";
-import pg from "pg";
-import { FileMigrationProvider, Insertable, Kysely, Migrator, PostgresDialect, Selectable, Updateable } from "kysely";
-import { type DB, Programs, Users } from "./generated.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import url from "node:url";
+import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from "kysely";
+import pg from "pg";
+import environment from "../environment.js";
+import type { DB } from "./generated.js";
 
 const dialect = new PostgresDialect({
   pool: new pg.Pool({

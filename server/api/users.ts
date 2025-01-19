@@ -1,35 +1,40 @@
+import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import jwt from "jsonwebtoken";
+import { z } from "zod";
 
-import environment from "../environment.js";
 import type { UserToken } from "../../common/api-types.js";
+import environment from "../environment.js";
 import { UsersService } from "../services/users-service.js";
-import { authenticate } from "../middleware/authenticate.js";
 
 const ONE_DAY_IN_MS: number = 3600 * 24 * 1000;
 
 export const users = new Hono();
 
-users.post("/", async (c) => {
-  const json = await c.req.json();
-  const email: unknown = json.email;
-  const password: unknown = json.password;
+users.post(
+  "/",
+  zValidator(
+    "json",
+    z.object({
+      email: z.string().email(),
+      password: z.string(),
+    }),
+  ),
+  async (c) => {
+    const { email, password } = c.req.valid("json");
 
-  if (typeof email !== "string") throw new HTTPException(400, { message: "email must be a string" });
-  if (typeof password !== "string") throw new HTTPException(400, { message: "password must be a string" });
+    const user = await UsersService.create(email, password);
+    const [, token] = await UsersService.signIn(email, password);
 
-  const user = await UsersService.create(email, password);
-  const [, token] = await UsersService.signIn(email, password);
-
-  const cookieExpiration = new Date(new Date().getTime() + ONE_DAY_IN_MS);
-  setCookie(c, environment.SESSION_COOKIE, token, { httpOnly: true, expires: cookieExpiration });
-  return c.json({
-    id: user.id,
-    email: user.email,
-  });
-});
+    const cookieExpiration = new Date(new Date().getTime() + ONE_DAY_IN_MS);
+    setCookie(c, environment.SESSION_COOKIE, token, { httpOnly: true, expires: cookieExpiration });
+    return c.json({
+      id: user.id,
+      email: user.email,
+    });
+  },
+);
 
 users.get("/me", async (c) => {
   const cookie = getCookie(c)[environment.SESSION_COOKIE] ?? "";
@@ -43,23 +48,28 @@ users.get("/me", async (c) => {
   }
 });
 
-users.post("/sessions", async (c) => {
-  const body = await c.req.json();
-  const email: unknown = body.email;
-  const password: unknown = body.password;
+users.post(
+  "/sessions",
+  zValidator(
+    "json",
+    z.object({
+      email: z.string().email(),
+      password: z.string(),
+    }),
+  ),
+  async (c) => {
+    const { email, password } = c.req.valid("json");
 
-  if (typeof email !== "string") throw new HTTPException(400, { message: "email must be a string" });
-  if (typeof password !== "string") throw new HTTPException(400, { message: "password must be a string" });
+    const [user, token] = await UsersService.signIn(email, password);
 
-  const [user, token] = await UsersService.signIn(email, password);
-
-  const cookieExpiration = new Date(new Date().getTime() + ONE_DAY_IN_MS);
-  setCookie(c, environment.SESSION_COOKIE, token, { httpOnly: true, expires: cookieExpiration });
-  return c.json({
-    id: user.id,
-    email: user.email,
-  });
-});
+    const cookieExpiration = new Date(new Date().getTime() + ONE_DAY_IN_MS);
+    setCookie(c, environment.SESSION_COOKIE, token, { httpOnly: true, expires: cookieExpiration });
+    return c.json({
+      id: user.id,
+      email: user.email,
+    });
+  },
+);
 
 users.delete("/sessions", async (c) => {
   deleteCookie(c, environment.SESSION_COOKIE);

@@ -31,7 +31,8 @@
         "noImplicitAnyLet": "off"
       },
       "correctness": {
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "off",
+        "noUnusedImports": "error"
       }
     }
   },
@@ -43,6 +44,6 @@
     "lineWidth": 120
   },
   "organizeImports": {
-    "enabled": false
+    "enabled": true
   }
 }

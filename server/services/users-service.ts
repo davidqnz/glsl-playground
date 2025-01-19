@@ -1,11 +1,11 @@
-import environment from "../environment.js";
+import crypto from "node:crypto";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import * as EmailValidator from "email-validator";
+import { HTTPException } from "hono/http-exception";
+import jwt from "jsonwebtoken";
 import { db } from "../database/db.js";
 import type { User } from "../database/types.js";
-import crypto from "node:crypto";
-import { HTTPException } from "hono/http-exception";
+import environment from "../environment.js";
 
 export class UsersService {
   static async create(email: string, password: string): Promise<User> {

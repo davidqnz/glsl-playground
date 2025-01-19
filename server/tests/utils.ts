@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 
-import { db } from "../database/db.js";
 import { app } from "../app.js";
+import { db } from "../database/db.js";
 
 export const testUsers = {
   existing: {

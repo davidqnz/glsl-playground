@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import "./environment.js";
-import { db, migrator } from "./database/db.js";
 import { app } from "./app.js";
+import { db, migrator } from "./database/db.js";
 import environment from "./environment.js";
 
 async function start() {

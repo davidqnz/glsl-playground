@@ -1,6 +1,6 @@
 import type { ProgramData } from "../../common/api-types";
-import newVertexShader from "../assets/shaders/new-vertex.vs?raw";
 import newFragmentShader from "../assets/shaders/new-fragment.fs?raw";
+import newVertexShader from "../assets/shaders/new-vertex.vs?raw";
 
 export function createNewProgram(programId: string): ProgramData {
   return {

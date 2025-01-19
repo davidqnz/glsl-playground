@@ -1,3 +1,4 @@
+import { serveStatic } from "@hono/node-server/serve-static";
 /*******************************************************************************
  * All general routes are handled in this file - all routes agnostic of the API
  * itself. This includes global middleware, general handlers (like 404 and error
@@ -6,7 +7,6 @@
  * For api routes, see api.ts.
  ******************************************************************************/
 import { Hono } from "hono";
-import { serveStatic } from "@hono/node-server/serve-static";
 
 import { api } from "./api/api.js";
 

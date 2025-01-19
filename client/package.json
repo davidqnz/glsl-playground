@@ -2,9 +2,9 @@
   "name": "glsl-playground-client",
   "type": "module",
   "scripts": {
-    "format": "biome format --write .",
+    "format": "biome check --write .",
     "check": "npm run check:lint && npm run check:types",
-    "check:lint": "biome ci .",
+    "check:lint": "biome check .",
     "check:types": "tsc",
     "start": "vite",
     "build": "vite build"

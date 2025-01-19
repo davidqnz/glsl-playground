@@ -1,4 +1,4 @@
-import { migrator, db } from "./db.js";
+import { db, migrator } from "./db.js";
 
 async function run() {
   const target = process.argv[2];

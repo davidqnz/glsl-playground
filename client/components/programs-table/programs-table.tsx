@@ -1,7 +1,7 @@
-import type { ReactElement } from "react";
-import type { ProgramData } from "../../../common/api-types";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import type { ReactElement } from "react";
+import type { ProgramData } from "../../../common/api-types";
 import IconButton from "../form-controls/icon-button";
 import styles from "./programs-table.module.css";
 
