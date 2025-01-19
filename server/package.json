@@ -29,9 +29,9 @@
     "@types/obj-file-parser": "^0.5.0",
     "@types/pg": "8.6.5",
     "bun-types": "^1.0.25",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.24.2",
     "kysely-codegen": "^0.11.0",
-    "tsx": "^4.7.0",
-    "typescript": "5.3.3"
+    "tsx": "^4.19.2",
+    "typescript": "5.7.3"
   }
 }
