@@ -10,9 +10,11 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@mui/icons-material": "^5.10.16",
-    "obj-file-parser": "^0.5.3",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.0",
     "gl-matrix": "^3.4.3",
+    "obj-file-parser": "^0.5.3",
     "react": "^18.2.0",
     "react-ace": "^10.1.0",
     "react-dom": "^18.2.0",
