@@ -1,9 +1,7 @@
-import { db } from "../database/db.js";
 import bcrypt from "bcrypt";
-import environment from "../environment.js";
 
-export const setCookieRegex = new RegExp(`^${environment.SESSION_COOKIE}=(\\S+);`);
-export const clearCookieRegex = new RegExp(`^${environment.SESSION_COOKIE}=;`);
+import { db } from "../database/db.js";
+import { app } from "../app.js";
 
 export const testUsers = {
   existing: {
@@ -48,6 +46,104 @@ export const testPrograms = {
     didCompile: false,
   },
 };
+
+export class TestAgent {
+  cookies: Map<string, string>;
+
+  constructor() {
+    this.cookies = new Map();
+  }
+
+  private serializeCookies(): string {
+    return [...this.cookies.entries()].map(([k, v]) => `${k}=${v}`).join("; ");
+  }
+
+  private processSetCookies(setCookies: string[]) {
+    for (const h of setCookies) {
+      const match = h.trim().match(/^([^\s=]+)=([^\s]*);/);
+      if (!match) {
+        throw new Error(`Set-Cookie header appears to malformed: ${h}`);
+      }
+      const [_, k, v] = match;
+      if (v) {
+        this.cookies.set(k, v);
+      } else {
+        this.cookies.delete(k);
+      }
+    }
+  }
+
+  getCookie(key: string): string | undefined {
+    return this.cookies.get(key);
+  }
+
+  async get(path: string): Promise<Response> {
+    const response = await app.request(path, {
+      method: "GET",
+      headers: {
+        Cookie: this.serializeCookies(),
+      },
+    });
+    const setCookies = response.headers.getSetCookie();
+    this.processSetCookies(setCookies);
+    return response;
+  }
+
+  async post(path: string, body: any): Promise<Response> {
+    const response = await app.request(path, {
+      method: "POST",
+      headers: {
+        Cookie: this.serializeCookies(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const setCookies = response.headers.getSetCookie();
+    this.processSetCookies(setCookies);
+    return response;
+  }
+
+  async put(path: string, body: any): Promise<Response> {
+    const response = await app.request(path, {
+      method: "PUT",
+      headers: {
+        Cookie: this.serializeCookies(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const setCookies = response.headers.getSetCookie();
+    this.processSetCookies(setCookies);
+    return response;
+  }
+
+  async patch(path: string, body: any): Promise<Response> {
+    const response = await app.request(path, {
+      method: "PATCH",
+      headers: {
+        Cookie: this.serializeCookies(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const setCookies = response.headers.getSetCookie();
+    this.processSetCookies(setCookies);
+    return response;
+  }
+
+  async delete(path: string): Promise<Response> {
+    const response = await app.request(path, {
+      method: "DELETE",
+      headers: {
+        Cookie: this.serializeCookies(),
+        "Content-Type": "application/json",
+      },
+    });
+    const setCookies = response.headers.getSetCookie();
+    this.processSetCookies(setCookies);
+    return response;
+  }
+}
 
 export async function setupDbForTest() {
   await db.deleteFrom("users").execute();

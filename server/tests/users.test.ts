@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach } from "bun:test";
-import { app } from "../app";
+
 import environment from "../environment";
-import { testUserCredentials, setupDbForTest, setCookieRegex, clearCookieRegex } from "./utils";
+import { testUserCredentials, setupDbForTest, TestAgent } from "./utils";
 
 describe("API /users routes", () => {
   beforeEach(async () => {
@@ -9,19 +9,15 @@ describe("API /users routes", () => {
   });
 
   it("POST /users should create a new user and log them in", async () => {
+    const agent = new TestAgent();
+
     const newUser = testUserCredentials.new;
 
     // POST to route to create new user
-    const response = await app.request("/api/v1/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newUser),
-    });
+    const response = await agent.post("/api/v1/users", newUser);
     expect(response.status).toEqual(200);
 
-    // Should return user
+    // Should return new user
     const body = await response.json();
     expect(body).toMatchObject({
       id: expect.any(String),
@@ -29,46 +25,32 @@ describe("API /users routes", () => {
     });
 
     // Should set a session cookie
-    const setCookie = response.headers.getSetCookie()[0];
-    expect(setCookie).toMatch(setCookieRegex);
+    const cookie = agent.getCookie(environment.SESSION_COOKIE);
+    expect(cookie).toBeTruthy();
   });
 
   it("POST /users should error if email already exists", async () => {
+    const agent = new TestAgent();
+
     // Some credentials with the same email as an existing user
     const userCredentials = { ...testUserCredentials.existing, password: "blahblahblah" };
 
     // Expect sign-up request to fail
-    const response = await app.request("/api/v1/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userCredentials),
-    });
+    const response = await agent.post("/api/v1/users", userCredentials);
     expect(response.status).toEqual(409);
   });
 
   it("GET /users/me should return the current user", async () => {
+    const agent = new TestAgent();
+
     const userCredentials = testUserCredentials.existing;
 
     // First Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userCredentials),
-    });
-    const token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    let response = await agent.post("/api/v1/users/sessions", userCredentials);
 
     // Now get the current user
-    response = await app.request("/api/v1/users/me", {
-      headers: {
-        Cookie: `${environment.SESSION_COOKIE}=${token};`,
-      },
-    });
+    response = await agent.get("/api/v1/users/me");
     expect(response.status).toEqual(200);
-
     const body = await response.json();
     expect(body).toMatchObject({
       id: expect.any(String),
@@ -77,55 +59,47 @@ describe("API /users routes", () => {
   });
 
   it("GET /users/me should return 401 status if not logged in", async () => {
+    const agent = new TestAgent();
+
     // Get the current user without logging in
-    const response = await app.request("/api/v1/users/me");
+    const response = await agent.get("/api/v1/users/me");
     expect(response.status).toEqual(200);
     const body = await response.json();
     expect(body).toEqual(null);
   });
 
   it("POST /users/sessions should log a user in", async () => {
+    const agent = new TestAgent();
+
     const userCredentials = testUserCredentials.existing;
 
     // Request should be successful
-    const response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userCredentials),
-    });
+    const response = await agent.post("/api/v1/users/sessions", userCredentials);
     expect(response.status).toEqual(200);
 
     // Should set a session cookie
-    const setCookie = response.headers.getSetCookie()[0];
-    expect(setCookie).toMatch(new RegExp(setCookieRegex));
+    const cookie = agent.getCookie(environment.SESSION_COOKIE);
+    expect(cookie).toBeTruthy();
   });
 
   it("DELETE /users/sessions should log a user out", async () => {
+    const agent = new TestAgent();
+
     const userCredentials = testUserCredentials.existing;
 
     // First Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userCredentials),
-    });
-    let token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    await agent.post("/api/v1/users/sessions", userCredentials);
 
     // Should set a session cookie
-    const setCookie = response.headers.getSetCookie()[0];
-    expect(setCookie).toMatch(new RegExp(setCookieRegex));
+    let cookie = agent.getCookie(environment.SESSION_COOKIE);
+    expect(cookie).toBeTruthy();
 
     // Now log out
-    response = await app.request("/api/v1/users/sessions", {
-      method: "DELETE",
-    });
+    const response = await agent.delete("/api/v1/users/sessions");
     expect(response.status).toEqual(200);
 
     // Session cookie should be cleared
-    token = response.headers.getSetCookie()[0].match(clearCookieRegex)![1];
+    cookie = agent.getCookie(environment.SESSION_COOKIE);
+    expect(cookie).toBeUndefined();
   });
 });

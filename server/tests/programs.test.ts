@@ -1,7 +1,5 @@
 import { expect, describe, it, beforeEach } from "bun:test";
-import { testUserCredentials, setupDbForTest, testPrograms, setCookieRegex } from "./utils";
-import { app } from "../app";
-import environment from "../environment";
+import { testUserCredentials, setupDbForTest, testPrograms, TestAgent } from "./utils";
 
 describe("API /programs routes", () => {
   beforeEach(async () => {
@@ -22,34 +20,29 @@ describe("API /programs routes", () => {
   }
 
   it("GET /programs/:id should return a program", async () => {
-    const response = await app.request(`/api/v1/programs/${testPrograms.existing.id}`);
+    const agent = new TestAgent();
+
+    const response = await agent.get(`/api/v1/programs/${testPrograms.existing.id}`);
     expect(response.status).toEqual(200);
     const body = await response.json();
     expectProgram(body);
   });
 
   it("GET /programs/:id should return 404 for invalid id", async () => {
-    const response = await app.request("/api/v1/programs/64f05b2a-50f5-43fd-9331-50f0c03e4495");
+    const agent = new TestAgent();
+
+    const response = await agent.get("/api/v1/programs/64f05b2a-50f5-43fd-9331-50f0c03e4495");
     expect(response.status).toEqual(404);
   });
 
-  it("GET /programs should return all the user's programs", async () => {
+  it.only("GET /programs should return all the user's programs", async () => {
+    const agent = new TestAgent();
+
     // Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(testUserCredentials.existing),
-    });
-    const token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    let response = await agent.post("/api/v1/users/sessions", testUserCredentials.existing);
 
     // Get programs
-    response = await app.request("/api/v1/programs", {
-      headers: {
-        Cookie: `${environment.SESSION_COOKIE}=${token}`,
-      },
-    });
+    response = await agent.get("/api/v1/programs");
     expect(response.status).toEqual(200);
     const body = await response.json();
     expect(body).toBeArray();
@@ -57,15 +50,10 @@ describe("API /programs routes", () => {
   });
 
   it("POST /programs should create and return a new program", async () => {
+    const agent = new TestAgent();
+
     // Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(testUserCredentials.existing),
-    });
-    const token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    let response = await agent.post("/api/v1/users/sessions", testUserCredentials.existing);
 
     const newProgramData = {
       title: "a new program",
@@ -74,16 +62,8 @@ describe("API /programs routes", () => {
       didCompile: false,
     };
 
-    response = await app.request("/api/v1/programs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `${environment.SESSION_COOKIE}=${token}`,
-      },
-      body: JSON.stringify(newProgramData),
-    });
+    response = await agent.post("/api/v1/programs", newProgramData);
     expect(response.status).toEqual(200);
-
     const body = await response.json();
     expectProgram(body);
     expect(body.title).toEqual(newProgramData.title);
@@ -93,6 +73,8 @@ describe("API /programs routes", () => {
   });
 
   it("POST /programs requires authentication", async () => {
+    const agent = new TestAgent();
+
     const newProgramData = {
       title: "a new program",
       vertexSource: "bahfjasdhlkjg",
@@ -100,26 +82,15 @@ describe("API /programs routes", () => {
       didCompile: false,
     };
 
-    const response = await app.request("/api/v1/programs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newProgramData),
-    });
+    const response = await agent.post("/api/v1/programs", newProgramData);
     expect(response.status).toEqual(401);
   });
 
   it("PATCH /programs/:id should update a program", async () => {
+    const agent = new TestAgent();
+
     // Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(testUserCredentials.existing),
-    });
-    const token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    let response = await agent.post("/api/v1/users/sessions", testUserCredentials.existing);
 
     // Get some updated data
     const updateData = {
@@ -128,16 +99,8 @@ describe("API /programs routes", () => {
     };
 
     // Do the update
-    response = await app.request(`/api/v1/programs/${testPrograms.existing.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `${environment.SESSION_COOKIE}=${token}`,
-      },
-      body: JSON.stringify(updateData),
-    });
+    response = await agent.patch(`/api/v1/programs/${testPrograms.existing.id}`, updateData);
     expect(response.status).toEqual(200);
-
     const body = await response.json();
     expectProgram(body);
     expect(body.vertexSource).toEqual(updateData.vertexSource);
@@ -145,70 +108,39 @@ describe("API /programs routes", () => {
   });
 
   it("PATCH /programs/:id shouldn't allow updating programs not owned by the current user", async () => {
+    const agent = new TestAgent();
+
     // Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(testUserCredentials.troublesome),
-    });
-    const token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    let response = await agent.post("/api/v1/users/sessions", testUserCredentials.troublesome);
 
     // Try to modify another user's program
-    response = await app.request(`/api/v1/programs/${testPrograms.existing.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `${environment.SESSION_COOKIE}=${token}`,
-      },
-      body: JSON.stringify({ title: "user 1 smells" }),
-    });
+    response = await agent.patch(`/api/v1/programs/${testPrograms.existing.id}`, { title: "user 1 smells" });
     expect(response.status).toEqual(403);
   });
 
   it("DELETE /programs/:id should delete a program", async () => {
+    const agent = new TestAgent();
+
     // Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(testUserCredentials.existing),
-    });
-    const token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    let response = await agent.post("/api/v1/users/sessions", testUserCredentials.existing);
 
     // Delete the program
-    response = await app.request(`/api/v1/programs/${testPrograms.existing.id}`, {
-      method: "DELETE",
-      headers: {
-        Cookie: `${environment.SESSION_COOKIE}=${token}`,
-      },
-    });
+    response = await agent.delete(`/api/v1/programs/${testPrograms.existing.id}`);
     expect(response.status).toEqual(200);
 
-    response = await app.request(`/api/v1/programs/${testPrograms.existing.id}`);
+    // Check that it's gone
+    response = await agent.get(`/api/v1/programs/${testPrograms.existing.id}`);
     expect(response.status).toEqual(404);
   });
 
   it("DELETE /programs/:id shouldn't allow users to delete programs they don't own", async () => {
+    const agent = new TestAgent();
+
     // Log in
-    let response = await app.request("/api/v1/users/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(testUserCredentials.troublesome),
-    });
-    const token = response.headers.getSetCookie()[0].match(setCookieRegex)![1];
+    let response = await agent.post("/api/v1/users/sessions", testUserCredentials.troublesome);
 
     // Try to delete the program
-    response = await app.request(`/api/v1/programs/${testPrograms.existing.id}`, {
-      method: "DELETE",
-      headers: {
-        Cookie: `${environment.SESSION_COOKIE}=${token}`,
-      },
-    });
+    response = await agent.delete(`/api/v1/programs/${testPrograms.existing.id}`);
     expect(response.status).toEqual(403);
   });
 });

@@ -7,6 +7,7 @@
   "scripts": {
     "format": "npm run -w client format && npm run -w server format",
     "check": "npm run -w client check && npm run -w server check",
+    "test": "npm run -w server test",
     "start:web": "npm run -w client start",
     "start:server": "npm run -w server start",
     "start:docker": "docker compose up --build app",
