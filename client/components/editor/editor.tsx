@@ -137,7 +137,7 @@ export default function Editor(): ReactElement {
             </div>
           </ToolbarLeftGroup>
           <ToolbarRightGroup className={styles.toolBarRight}>
-            <a href="https://github.com/david-qz/glsl-playground">
+            <a href="https://github.com/davidqnz/glsl-playground">
               <GitHubIcon />
             </a>
           </ToolbarRightGroup>
