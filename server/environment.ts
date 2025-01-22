@@ -41,7 +41,6 @@ function fallback<T>(
   fallbackValue: NonNullable<T>,
 ): EnvironmentEntry<NonNullable<T>> {
   if (value === null || value === undefined) {
-    console.debug(`Warning: environment variable '${key}' is missing or invalid, defaulting to '${fallbackValue}'`);
     return { key, value: fallbackValue };
   }
   return { key, value };
@@ -57,8 +56,6 @@ function required<T>({ key, value }: EnvironmentEntry<T>): EnvironmentEntry<NonN
 
 export default {
   PORT: fallback(parseInteger(load("PORT")), 7890).value,
-  SESSION_COOKIE: fallback(load("SESSION_COOKIE"), "session").value,
   JWT_SECRET: required(load("JWT_SECRET")).value,
-  SALT_ROUNDS: fallback(parseInteger(load("SALT_ROUNDS")), 10).value,
   DATABASE_FILE: required(load("DATABASE_FILE")).value,
 };

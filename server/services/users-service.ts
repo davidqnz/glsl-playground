@@ -11,6 +11,9 @@ export type User = typeof s.users.$inferSelect;
 export type UserUpdate = Partial<typeof s.users.$inferSelect>;
 export type UserInsert = typeof s.users.$inferInsert;
 
+export const SESSION_COOKIE_NAME = "session";
+const SALT_ROUNDS = 10;
+
 export class UsersService {
   static async create(email: string, password: string): Promise<User> {
     if (!EmailValidator.validate(email)) {
@@ -27,7 +30,7 @@ export class UsersService {
     }
 
     const id = crypto.randomUUID();
-    const passwordHash = await bcrypt.hash(password, environment.SALT_ROUNDS);
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     const [newUser] = await db.insert(s.users).values({ id, email, passwordHash }).returning();
     return newUser;
   }

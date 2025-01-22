@@ -1,6 +1,5 @@
 /*******************************************************************************
- * Routes here belong to the API. All routes here assume API_PREFIX. In local
- * development, this is assumed to be /api/v1. See the Vite configuration.
+ * Routes here belong to the API.
  ******************************************************************************/
 import { Hono } from "hono";
 

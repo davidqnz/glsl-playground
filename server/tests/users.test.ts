@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-
-import environment from "../environment.js";
 import { TestAgent, setupDbForTest, testUserCredentials } from "./utils.js";
+
+const SESSION_COOKIE_NAME = "session";
 
 describe("API /users routes", () => {
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe("API /users routes", () => {
     });
 
     // Should set a session cookie
-    const cookie = agent.getCookie(environment.SESSION_COOKIE);
+    const cookie = agent.getCookie(SESSION_COOKIE_NAME);
     expect(cookie).toBeTruthy();
   });
 
@@ -78,7 +78,7 @@ describe("API /users routes", () => {
     expect(response.status).toEqual(200);
 
     // Should set a session cookie
-    const cookie = agent.getCookie(environment.SESSION_COOKIE);
+    const cookie = agent.getCookie(SESSION_COOKIE_NAME);
     expect(cookie).toBeTruthy();
   });
 
@@ -91,7 +91,7 @@ describe("API /users routes", () => {
     await agent.post("/api/v1/users/sessions", userCredentials);
 
     // Should set a session cookie
-    let cookie = agent.getCookie(environment.SESSION_COOKIE);
+    let cookie = agent.getCookie(SESSION_COOKIE_NAME);
     expect(cookie).toBeTruthy();
 
     // Now log out
@@ -99,7 +99,7 @@ describe("API /users routes", () => {
     expect(response.status).toEqual(200);
 
     // Session cookie should be cleared
-    cookie = agent.getCookie(environment.SESSION_COOKIE);
+    cookie = agent.getCookie(SESSION_COOKIE_NAME);
     expect(cookie).toBeUndefined();
   });
 });
