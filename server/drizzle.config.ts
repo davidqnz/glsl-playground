@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import environment from "./environment.js";
+import environment from "./src/environment.js";
 
 export default defineConfig({
   dialect: "sqlite",

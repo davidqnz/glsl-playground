@@ -12,5 +12,6 @@
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["bun-types"]
-  }
+  },
+  "include": ["src", "build.ts", "drizzle.config.ts"]
 }

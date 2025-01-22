@@ -1,23 +1,8 @@
 {
-  "name": "glsl-playgroun",
+  "name": "glsl-playground",
   "version": "0.0.1",
   "license": "MIT",
-  "workspaces": ["server", "client"],
   "type": "module",
-  "scripts": {
-    "format": "npm run -w client format && npm run -w server format",
-    "check": "npm run -w client check && npm run -w server check",
-    "test": "npm run -w server test",
-    "start:web": "npm run -w client start",
-    "start:server": "npm run -w server start",
-    "start:docker": "docker compose up --build app",
-    "build": "npm run build:web && npm run build:server",
-    "build:web": "npm run -w client build",
-    "build:server": "npm run -w server build"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4"
-  },
   "volta": {
     "node": "22.13.0"
   }

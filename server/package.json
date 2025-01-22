@@ -10,7 +10,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
     "db:drop": "drizzle-kit drop",
-    "start": "tsx --watch index.ts",
+    "start": "tsx --watch src/server.ts",
     "build": "tsx build.ts"
   },
   "dependencies": {
@@ -19,8 +19,8 @@
     "@libsql/client": "^0.14.0",
     "bcrypt": "5.1.1",
     "dotenv": "^16.0.2",
-    "drizzle-orm": "^0.38.4",
     "drizzle-kit": "^0.30.2",
+    "drizzle-orm": "^0.38.4",
     "email-validator": "^2.0.4",
     "hono": "^4.6.17",
     "jsonwebtoken": "^9.0.2",
@@ -29,6 +29,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/bcrypt": "5.0.2",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^22.10.7",

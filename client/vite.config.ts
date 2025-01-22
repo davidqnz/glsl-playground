@@ -8,6 +8,7 @@ import sassDts from "vite-plugin-sass-dts";
 dotenv.config();
 
 export default defineConfig({
+  root: "src",
   server: {
     open: true,
     port: 7891,
@@ -26,7 +27,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../public",
+    outDir: "../dist",
     emptyOutDir: true,
   },
   plugins: [

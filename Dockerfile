@@ -1,31 +1,44 @@
-FROM node:22-alpine AS build
+#################################################
+FROM node:22-alpine AS frontend
 
-WORKDIR /build
-
-COPY package.json package-lock.json ./
-COPY server/package.json server/package.json
-COPY client/package.json client/package.json
+WORKDIR /build/client
+COPY client/package.json client/package-lock.json ./
 RUN npm ci
 
+WORKDIR /build
 COPY common common
 
-COPY server server
-RUN npm run -w server build
+WORKDIR /build/client
+COPY client/src src
+COPY client/tsconfig.json tsconfig.json
+COPY client/vite.config.ts vite.config.ts
+RUN npm run build
 
-COPY client client
-RUN npm run -w client build
+#################################################
+FROM node:22-alpine AS backend
 
+WORKDIR /build/server
+COPY server/package.json server/package-lock.json ./
+RUN npm ci
+
+WORKDIR /build
+COPY common common
+
+WORKDIR /build/server
+COPY server/src src
+COPY server/tsconfig.json tsconfig.json
+COPY server/build.ts build.ts
+RUN npm run build
 RUN npm prune --omit=dev
 
 #################################################
-
 FROM node:22-alpine
 
 WORKDIR /app
 
-COPY --from=build /build/node_modules node_modules
-COPY --from=build /build/package.json package.json
-COPY --from=build /build/dist dist
-COPY --from=build /build/public public
+COPY --from=backend /build/server/node_modules node_modules
+COPY --from=backend /build/server/package.json package.json
+COPY --from=backend /build/server/dist dist
+COPY --from=frontend /build/client/dist public
 
 CMD [ "node", "dist/server.js" ]
